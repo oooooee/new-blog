@@ -33,8 +33,6 @@
         </div>
     </div>
 
-    <hr>
-
 @stop
 
 @section('footer')

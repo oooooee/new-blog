@@ -73,6 +73,8 @@ Route::get('bar',function(){
 
 });
 
+Route::get('sns_get_login', 'Home\HomeController@sns_get_login');
+Route::get('sns_login', 'Home\HomeController@sns_login');
 
 /**
  * home
@@ -91,5 +93,6 @@ Route::group(['namespace' => 'Home'], function()
 
 	Route::get('articles', 'ArticlesController@index');
 	Route::get('{slug}', 'ArticlesController@show');
+//	Route::get('{slug}', 'ArticlesController@show_bak');
 });
 
