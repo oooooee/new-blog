@@ -27,10 +27,74 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                @foreach($articles as $article)
+                @foreach($articles as $key => $article)
 
-                    <div class="post-preview">
-                        <a href="/{{$article->slug}}">
+                    <div class="posts-expand" style="opacity: 1; display: block; transform: translateY(0px);">
+                        <div class="post post-type-normal">
+                            <div class="post-header">
+                                <h1 class="post-title">
+                                    <a class="post-title-link" href="/{{$article->slug}}">
+                                       {{ $article->title }}
+                                    </a>
+                                </h1>
+                                <div class="post-meta">
+                                    <span class="post-time">
+                                    发表于 {{substr($article->created_at, 0, 10)}}
+                                    </span>
+                                    <span class="post-comments-count">
+                                        &nbsp; | &nbsp;
+                                        <a href="/2015/03/13/Mac-OS-X-配置AMP环境/#comments">
+                                            <span class="post-comments-count ds-thread-count" data-thread-key="2015/03/13/Mac-OS-X-配置AMP环境/">
+                                                暂无评论
+                                            </span>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="post-body">
+
+                                <div style="max-height: 600px;overflow: hidden;">
+                                    {!! $article->body_html !!}
+                                </div>
+                                {{--<h3 id="">前言</h3>--}}
+                                {{--<p>因为每次重新安装系统都需要配置一下Apache、MySQL、PHP的环境，网上的文章又不完整或者不完全符合自己的情况，所以写下一篇文章来记录一下，保证99%配置成功，还剩1%由于各种奇葩环境原因。。。主要从 6 个方面进行记录：</p>--}}
+                                {{--<ol>--}}
+                                    {{--<li>启动Apache</li>--}}
+                                    {{--<li>建立个人的网站目录</li>--}}
+                                    {{--<li>启动php的解析功能</li>--}}
+                                    {{--<li>安装、启动mysql</li>--}}
+                                    {{--<li>修改mysql root密码</li>--}}
+                                    {{--<li>使用客户端连接mysql</li>--}}
+                                {{--</ol>--}}
+                                <div class="post-more-link text-center">
+                                    <a class="btn"href="/{{$article->slug}}">
+                                        阅读全文 »
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="post-footer">
+                                {{--<div class="post-tags">
+                                    <a href="/tags/Mac/">
+                                        #Mac
+                                    </a>
+                                    <a href="/tags/Apache/">
+                                        #Apache
+                                    </a>
+                                    <a href="/tags/MySQL/">
+                                        #MySQL
+                                    </a>
+                                    <a href="/tags/PHP/">
+                                        #PHP
+                                    </a>
+                                </div>--}}
+                                @if($key != count($articles)-1)
+                                    <hr>
+                                @endif
+                                <div class="post-eof"></div>
+                            </div>
+                        </div>
+                      {{--  <a href="/{{$article->slug}}">
                             <h2 class="post-title">
                                 {{$article->title}}
                             </h2>
@@ -38,11 +102,8 @@
                                 {{$article->content}}
                             </h3>
                         </a>
-                        <p class="post-meta">Posted by <a href="#">Vincent</a> on {{substr($article->created_at, 0, 10)}}</p>
+                        <p class="post-meta">Posted by <a href="#">Vincent</a> on {{substr($article->created_at, 0, 10)}}</p>--}}
                     </div>
-
-                    <hr>
-
                 @endforeach
 
                 {{--<hr>
@@ -88,8 +149,6 @@
             </div>
         </div>
     </div>
-
-    <hr>
 
 @stop
 
