@@ -42,11 +42,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 	});
 });
 
-Route::get('test', function(){
-
-});
-
-
 /**
  * auth
  */
@@ -95,4 +90,12 @@ Route::group(['namespace' => 'Home'], function()
 	Route::get('{slug}', 'ArticlesController@show');
 //	Route::get('{slug}', 'ArticlesController@show_bak');
 });
+
+
+/**
+ * spider
+ */
+Route::get('spider/smzdm', 'SpiderController@smzdm');
+
+
 
