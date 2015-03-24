@@ -29,8 +29,7 @@ class SpiderController extends Controller {
         if (!empty($rows)) {
             \Mail::send('emails.goods', array('rows' => $rows), function($message)
             {
-                $message->to('oooooee@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
-                $message->to('396840082@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
+                $message->to('362619655@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
             });
         }
 
