@@ -43,7 +43,10 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 });
 
 Route::get('test', function(){
-
+    Mail::send('emails.password', array('token' => 'value'), function($message)
+    {
+        $message->to('oooooee@qq.com', 'John Smith')->subject('Welcome!');
+    });
 });
 
 
