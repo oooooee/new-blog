@@ -10,7 +10,7 @@ class SpiderController extends Controller {
      * 匹配正则
      * @var string
      */
-    private $pattern = '/(花王|贝亲|笔记本|卡西欧|纸巾|机械.*?键盘|gxg|新百伦)/';
+    private $pattern = '/(花王|贝亲|笔记本|卡西欧|纸巾|机械.*?键盘|gxg|新百伦|施巴|妙思乐|维达|人字拖)/';
 
     private function is_match($str){
         if (preg_match($this->pattern, $str)) {
