@@ -1,113 +1,135 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
+use Curl;
+use App\Spider;
 
 class SpiderController extends Controller {
 
-	public function smzdm()
+    /**
+     * 匹配正则
+     * @var string
+     */
+    private $pattern = '/(花王|贝亲|笔记本|卡西欧|纸巾|机械.*?键盘|gxg|新百伦)/';
+
+    private function is_match($str){
+        if (preg_match($this->pattern, $str)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * 发送邮件
+     */
+    private function send_mail($rows)
+    {
+        if (!empty($rows)) {
+            \Mail::send('emails.goods', array('rows' => $rows), function($message)
+            {
+                $message->to('oooooee@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
+            });
+        }
+
+    }
+
+    public function index(){
+
+        // 总数据
+        $rows = [];
+
+        $mgpyh = $this->mgpyh();
+
+        $smzdm = [];
+
+        $huihui = [];
+
+        $meidebi = [];
+
+        $this->send_mail(array_merge($mgpyh, $smzdm, $huihui, $meidebi));
+    }
+
+
+    public function smzdm()
 	{
 
 		$timesort = time() . '00';
 		$url = 'http://www.smzdm.com/json_more?timesort=' . $timesort;
 
 
-		$curl = new \Curl();
+		$curl = new Curl();
 
 		$contents = $curl->get($url);
 		$contents = json_decode($contents->body, true);
 
-//		print_r($contents);
-		var_dump(preg_match('/[(四川胡椒籽)|(椰汁萃取)]/u', '1111四川胡5椒籽2222'));
+        $spider = new Spider();
+        $mail_rows = [];
+        foreach ($contents as $key => $v) {
 
-
-		foreach ($contents as $key => $content) {
-
-//			var_dump(preg_match('/[四川胡椒籽|椰汁萃取]{1}/', $content['article_content_all']));
+            if ($this->is_match($v['article_content_all'])) {
+                $id = 'smzdm_' . $v['article_id'];
+                $insert_data = [
+                    'id' => $id,
+                    'title' => $v['article_title'],
+                    'content' => $v['article_content_all'],
+                    'url' => $v['article_url'],
+                    'post_at' => date('Y-m-d H:i:s', substr($v['timesort'], 0, 10)),
+                    'category' => '',
+                    'from' => 'smzdm',
+                    'is_send' => 1,
+                ];
+                if ($spider->add_new($insert_data)) {
+                    $mail_rows[] = $insert_data;
+                }
+            }
 
 		}
 
-	}
-
-	public function mygpyh(){
-
-		$url = 'http://www.mgpyh.com/get_more/?page=1';
+        print_r($mail_rows);
 
 	}
 
-	public function huihui($para)
+	public function mgpyh(){
+
+		$url = 'http://www.mgpyh.com/get_more/?page=2';
+
+        $curl = new Curl();
+        $content = $curl->get($url);
+        $content = json_decode($content->body, true);
+        $content = $content['items'];
+
+        $spider = new Spider();
+        $mail_rows = [];
+        foreach ($content as $k => $v) {
+            if ($this->is_match($v['post'])) {
+                $id = 'mgpyh_' . $v['id'];
+                $insert_data = [
+                    'id' => $id,
+                    'title' => $v['post_title'],
+                    'content' => $v['post'],
+                    'url' => $v['post_url'],
+                    'post_at' => date('Y-m-d H:i:s', strtotime($v['exact_time'])),
+                    'category' => $v['category'],
+                    'from' => 'mgpyh',
+                    'is_send' => 1,
+                ];
+                if ($spider->add_new($insert_data)) {
+                    $mail_rows[] = $insert_data;
+                }
+            }
+        }
+
+        return $mail_rows;
+    }
+
+	public function huihui()
 	{
 
-
+        print_r('c');
 
 
 
 	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		//
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
-	}
-
 }

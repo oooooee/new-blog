@@ -10,6 +10,12 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::get('test', function(){
+    Mail::send('emails.password', array('token' => 'ccc'), function($message)
+    {
+        $message->to('oooooee@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
+    });
+});
 
 
 /**
@@ -56,7 +62,6 @@ Route::get('logout','Admin\AuthController@logout');
 ]);
 */
 
-
 Route::get('foo',function(){
 	\Cache::flush();
 	return 'ok';
@@ -96,6 +101,8 @@ Route::group(['namespace' => 'Home'], function()
  * spider
  */
 Route::get('spider/smzdm', 'SpiderController@smzdm');
+Route::get('spider/huihui', 'SpiderController@huihui');
+Route::get('spider/mgpyh', 'SpiderController@mgpyh');
 
 
 
