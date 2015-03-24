@@ -100,9 +100,10 @@ Route::group(['namespace' => 'Home'], function()
 /**
  * spider
  */
-Route::get('spider/smzdm', 'SpiderController@smzdm');
-Route::get('spider/huihui', 'SpiderController@huihui');
-Route::get('spider/mgpyh', 'SpiderController@mgpyh');
+//Route::get('spider/smzdm', 'SpiderController@smzdm');
+//Route::get('spider/huihui', 'SpiderController@huihui');
+//Route::get('spider/mgpyh', 'SpiderController@mgpyh');
+Route::get('spider/index', 'SpiderController@index');
 
 
 

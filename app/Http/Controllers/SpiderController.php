@@ -42,7 +42,7 @@ class SpiderController extends Controller {
 
         $mgpyh = $this->mgpyh();
 
-        $smzdm = [];
+        $smzdm = $this->smzdm();
 
         $huihui = [];
 
@@ -89,6 +89,8 @@ class SpiderController extends Controller {
 
         print_r($mail_rows);
 
+        return $mail_rows;
+
 	}
 
 	public function mgpyh(){
@@ -120,6 +122,7 @@ class SpiderController extends Controller {
                 }
             }
         }
+        print_r($mail_rows);
 
         return $mail_rows;
     }
