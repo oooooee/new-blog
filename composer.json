@@ -13,7 +13,8 @@
 		"erusev/parsedown": "~1.5",
 		"graham-campbell/htmlmin": "~3.0",
 		"roumen/sitemap": "~2.5",
-	  	"shen2/zenapi": "dev-master"
+	  	"shen2/zenapi": "dev-master",
+	  	"shuber/curl": "dev-master"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "~4.0",
@@ -52,5 +53,9 @@
 	},
 	"config": {
 		"preferred-install": "dist"
-	}
+	},
+  	"repositories": [
+		{"type": "composer", "url": "http://pkg.phpcomposer.com/repo/packagist/"},
+		{"packagist": false}
+  	]
 }

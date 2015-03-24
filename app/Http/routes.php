@@ -42,14 +42,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 	});
 });
 
-Route::get('test', function(){
-    Mail::send('emails.password', array('token' => 'value'), function($message)
-    {
-        $message->to('oooooee@qq.com', 'John Smith')->subject('Welcome!');
-    });
-});
-
-
 /**
  * auth
  */
@@ -98,4 +90,12 @@ Route::group(['namespace' => 'Home'], function()
 	Route::get('{slug}', 'ArticlesController@show');
 //	Route::get('{slug}', 'ArticlesController@show_bak');
 });
+
+
+/**
+ * spider
+ */
+Route::get('spider/smzdm', 'SpiderController@smzdm');
+
+
 
