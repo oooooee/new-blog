@@ -39,7 +39,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 
 	Route::get('settings/index','SettingsController@index');
 	Route::patch('settings/index','SettingsController@update');
-	
+
 	Route::post('uploadImage', 'ArticlesController@uploadImage');
 
 	Route::get('setting/flush',function(){
@@ -104,6 +104,7 @@ Route::group(['namespace' => 'Home'], function()
 //Route::get('spider/huihui', 'SpiderController@huihui');
 //Route::get('spider/mgpyh', 'SpiderController@mgpyh');
 Route::get('spider/index', 'SpiderController@index');
+Route::get('coke/dajuhui', 'SpiderController@show');
 
 
 

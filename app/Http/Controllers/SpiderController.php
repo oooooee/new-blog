@@ -3,16 +3,36 @@
 use App\Http\Requests;
 use Curl;
 use App\Spider;
+use Illuminate\Support\Facades\View;
 
 class SpiderController extends Controller {
 
+
+    private function curl($url, $data=[], $type='get')
+    {
+
+        // 初使化一个用curl
+        $curl = new Curl();
+
+        // 取得数据
+        try{
+            $rec = $curl->$type($url, $data);
+            return $rec->body;
+        }catch (\ErrorException $e){
+            print_r($e);
+            return array();
+        }
+    }
+
     /**
      * 匹配正则
-     * @var string
+     * @var strin
      */
     private $pattern = '/(花王|贝亲|笔记本|卡西欧|纸巾|机械.*?键盘|gxg|新百伦|施巴|妙思乐|维达|人字拖|化石)/';
 
     private function is_match($str){
+
+        return true;
 
         if (preg_match($this->pattern, $str)) {
             return true;
@@ -243,6 +263,16 @@ class SpiderController extends Controller {
 
         return $mail_rows;
 
+    }
+
+
+    public function show(){
+
+        $pattern = '花王|贝亲|笔记本|卡西欧|纸巾|机械.*键盘|gxg|新百伦|施巴|妙思乐|维达|人字拖|化石';
+
+        $list = Spider::where('title', 'regexp', $pattern)->paginate(20);
+
+        return View::make('dajuhui.goods', ['articles'=>$list]);
     }
 
 
