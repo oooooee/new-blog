@@ -96,7 +96,7 @@ class SpiderController extends Controller {
                     'is_send' => 1,
                 ];
                 if ($spider->add_new($insert_data)) {
-                    $mail_rows[] = $insert_data;
+                    $mail_rows[] = $contents;
                 }
             }
 
@@ -110,7 +110,7 @@ class SpiderController extends Controller {
 
 	public function mgpyh(){
 
-		$url = 'http://www.mgpyh.com/get_more/?page=2';
+		$url = 'http://www.mgpyh.com/get_more';
 
         $curl = new Curl();
         $content = $curl->get($url);
@@ -126,7 +126,7 @@ class SpiderController extends Controller {
                     'id' => $id,
                     'title' => $v['post_title'],
                     'content' => $v['post'],
-                    'url' => $v['post_url'],
+                    'url' => 'http://www.mgpyh.com'.$v['post_url'],
                     'post_at' => date('Y-m-d H:i:s', strtotime($v['exact_time'])),
                     'category' => $v['category'],
                     'from' => '买个便宜货',
@@ -199,6 +199,8 @@ class SpiderController extends Controller {
 
         // 这是手机的api接口
         $url = 'http://a.meidebi.com/Share-allhotlist?limit=50&p=1';
+        // 商品详细信息
+        $detail = 'http://a.meidebi.com//Link-linkdesc-linkid-{id}.html';
 
         $curl = new Curl();
         $content = $curl->get($url);
@@ -209,11 +211,22 @@ class SpiderController extends Controller {
         $mail_rows = [];
         foreach ($content as $k => $v) {
             if ($this->is_match($v['title'])) {
+
+                // 取得商品详细信息
+                $detail_data = $curl->get(str_replace('{id}', $v['id'], $detail));
+
+                if(preg_match('/<body>([\s\S]*)<\/body>/', $detail_data->body, $match) && isset($match[1]))
+                {
+                    $detail_content = $match[1];
+                } else {
+                    $detail_content = '';
+                }
+
                 $id = 'meidebi_' . $v['id'];
                 $insert_data = [
                     'id' => $id,
                     'title' => $v['title'],
-                    'content' => '',
+                    'content' => $detail_content,
                     'url' => $v['orginurl'],
                     'post_at' => date('Y-m-d H:i:s', $v['createtime']),
                     'category' => $v['categoryname'],
@@ -231,4 +244,8 @@ class SpiderController extends Controller {
         return $mail_rows;
 
     }
+
+
 }
+
+
