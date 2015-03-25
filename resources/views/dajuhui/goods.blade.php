@@ -17,23 +17,28 @@
                             <div class="post-header">
                                 <h1 class="post-title">
                                     <a class="post-title-link" href="{{$article->url}}">
-                                        {{$article->from}}----{{ $article->title }}
+                                        {{$article->from}}-----{{ $article->title }}
                                     </a>
                                 </h1>
+                                <div class="post-meta">
+                                    <span class="post-time">
+                                    发表于 {{substr($article->created_at, 0, 10)}}
+                                    </span>
+                                </div>
                             </div>
 
                             <div class="post-body">
-                                <h5>商品链接： {{ $article->url }} </h5>
-                                <p>{!! strip_tags($article->content, '<img>') !!}</p>
+                                <h5>商品链接：{{$article->url}}</h5>
+                                {!! strip_tags($article->content, '<img>') !!}
                             </div>
                             <div class="post-footer">
                                 @if($key != count($articles)-1)
                                     <hr>
                                 @endif
+                                <div class="post-eof"></div>
                             </div>
                         </div>
                     </div>
-
                 @endforeach
 
                 <!-- Pager -->
