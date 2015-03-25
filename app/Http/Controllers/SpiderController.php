@@ -13,6 +13,7 @@ class SpiderController extends Controller {
     private $pattern = '/(花王|贝亲|笔记本|卡西欧|纸巾|机械.*?键盘|gxg|新百伦|施巴|妙思乐|维达|人字拖|化石)/';
 
     private function is_match($str){
+
         if (preg_match($this->pattern, $str)) {
             return true;
         } else {
@@ -29,8 +30,11 @@ class SpiderController extends Controller {
         if (!empty($rows)) {
             \Mail::send('emails.goods', array('rows' => $rows), function($message)
             {
+//                $message->to('coke_vincent@163.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
+//                $message->to('362619655@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
                 $message->to('396840082@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
                 $message->to('362619655@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
+
             });
         }
 
@@ -47,12 +51,16 @@ class SpiderController extends Controller {
     public function index(){
 
         // 总数据
+        $mgpyh = [];
         $mgpyh = $this->mgpyh();
 
+        $smzdm = [];
         $smzdm = $this->smzdm();
 
+        $huihui = [];
         $huihui = $this->huihui();
 
+        $meidebi = [];
         $meidebi = $this->meidebi();
 
         $this->send_mail(array_merge($mgpyh, $smzdm, $huihui, $meidebi));
@@ -84,7 +92,7 @@ class SpiderController extends Controller {
                     'url' => $v['article_url'],
                     'post_at' => date('Y-m-d H:i:s', substr($v['timesort'], 0, 10)),
                     'category' => '',
-                    'from' => 'smzdm',
+                    'from' => '什么值得买',
                     'is_send' => 1,
                 ];
                 if ($spider->add_new($insert_data)) {
@@ -121,7 +129,7 @@ class SpiderController extends Controller {
                     'url' => $v['post_url'],
                     'post_at' => date('Y-m-d H:i:s', strtotime($v['exact_time'])),
                     'category' => $v['category'],
-                    'from' => 'mgpyh',
+                    'from' => '买个便宜货',
                     'is_send' => 1,
                 ];
                 if ($spider->add_new($insert_data)) {
@@ -139,10 +147,14 @@ class SpiderController extends Controller {
 	{
 
         // 这是手机的api接口
-        $url = 'http://app.huihui.cn/deals/channel.json';
+
+        // 列表
+        $list = 'http://app.huihui.cn/deals/channel.json';
+        // 商品详细信息
+        $detail = 'http://app.huihui.cn/deals/deal/{id}.json?with_detail=1';
 
         $curl = new Curl();
-        $content = $curl->get($url);
+        $content = $curl->get($list);
         $content = json_decode($content->body, true);
         $content = $content['data'];
 
@@ -150,17 +162,26 @@ class SpiderController extends Controller {
         $mail_rows = [];
         foreach ($content as $k => $v) {
             if ($this->is_match($v['title'])) {
+                // 取得商品详细信息
+                $detail_data = $curl->get(str_replace('{id}', $v['id'], $detail));
+                $detail_data = json_decode($detail_data->body, true);
+                $detail_data = $detail_data['data'];
+
+                $url = strstr($detail_data['purchase_url'], 'taobao') ?
+                        $detail_data['purchase_url'] : urldecode(substr($detail_data['purchase_url'], 12, -8));
+
                 $id = 'huihui_' . $v['id'];
                 $insert_data = [
                     'id' => $id,
-                    'title' => $v['title'],
-                    'content' => '',
-                    'url' => '',
+                    'title' => $v['title'] . $v['sub_title'],
+                    'content' => $detail_data['page'],
+                    'url' => $url,
                     'post_at' => date('Y-m-d H:i:s', strtotime($v['pub_time'])),
                     'category' => '',
-                    'from' => 'huihui',
+                    'from' => '惠惠',
                     'is_send' => 1,
                 ];
+
                 if ($spider->add_new($insert_data)) {
                     $mail_rows[] = $insert_data;
                 }
@@ -196,7 +217,7 @@ class SpiderController extends Controller {
                     'url' => $v['orginurl'],
                     'post_at' => date('Y-m-d H:i:s', $v['createtime']),
                     'category' => $v['categoryname'],
-                    'from' => 'meidebi',
+                    'from' => '没得比',
                     'is_send' => 1,
                 ];
                 if ($spider->add_new($insert_data)) {
