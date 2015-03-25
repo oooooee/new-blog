@@ -36,16 +36,22 @@ class SpiderController extends Controller {
 
     }
 
+    private function echo_msg($name, $data){
+
+        echo $name . ': ' . '<br />';
+        print_r($data);
+        echo '<br /><hr />';
+
+    }
+
     public function index(){
 
         // 总数据
-        $rows = [];
-
         $mgpyh = $this->mgpyh();
 
         $smzdm = $this->smzdm();
 
-        $huihui = [];
+        $huihui = $this->huihui();
 
         $meidebi = $this->meidebi();
 
@@ -88,7 +94,7 @@ class SpiderController extends Controller {
 
 		}
 
-        print_r($mail_rows);
+        $this->echo_msg('什么值得买', $mail_rows);
 
         return $mail_rows;
 
@@ -123,7 +129,8 @@ class SpiderController extends Controller {
                 }
             }
         }
-        print_r($mail_rows);
+
+        $this->echo_msg('买个便宜货', $mail_rows);
 
         return $mail_rows;
     }
@@ -131,8 +138,38 @@ class SpiderController extends Controller {
 	public function huihui()
 	{
 
-        print_r('c');
+        // 这是手机的api接口
+        $url = 'http://app.huihui.cn/deals/channel.json';
 
+        $curl = new Curl();
+        $content = $curl->get($url);
+        $content = json_decode($content->body, true);
+        $content = $content['data'];
+
+        $spider = new Spider();
+        $mail_rows = [];
+        foreach ($content as $k => $v) {
+            if ($this->is_match($v['title'])) {
+                $id = 'huihui_' . $v['id'];
+                $insert_data = [
+                    'id' => $id,
+                    'title' => $v['title'],
+                    'content' => '',
+                    'url' => '',
+                    'post_at' => date('Y-m-d H:i:s', strtotime($v['pub_time'])),
+                    'category' => '',
+                    'from' => 'huihui',
+                    'is_send' => 1,
+                ];
+                if ($spider->add_new($insert_data)) {
+                    $mail_rows[] = $insert_data;
+                }
+            }
+        }
+
+        $this->echo_msg('惠惠', $mail_rows);
+
+        return $mail_rows;
 
 
 	}
@@ -149,7 +186,6 @@ class SpiderController extends Controller {
 
         $spider = new Spider();
         $mail_rows = [];
-        print_r($content);
         foreach ($content as $k => $v) {
             if ($this->is_match($v['title'])) {
                 $id = 'meidebi_' . $v['id'];
@@ -168,7 +204,8 @@ class SpiderController extends Controller {
                 }
             }
         }
-        print_r($mail_rows);
+
+        $this->echo_msg('没得比：', $mail_rows);
 
         return $mail_rows;
 
