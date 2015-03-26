@@ -10,14 +10,6 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('test', function(){
-    Mail::send('emails.password', array('token' => 'ccc'), function($message)
-    {
-        $message->to('oooooee@qq.com', 'John Smith')->subject('新商品提醒' . date('Y-m-d H:i:s'));
-    });
-});
-
-
 /**
  * admin
  */
@@ -48,6 +40,21 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 	});
 });
 
+Route::get('dajuhui', 'SpiderController@show');
+Route::get('custom', 'SpiderController@custom');
+Route::get('mdf_custom', ['middleware' => 'auth', function(){
+	$data = DB::table('custom_show')->where('id', '=', Auth::user()->id)->first();
+
+	if (!$data) {
+		$data = '';
+	}else{
+		$data = implode('|', json_decode($data->words, true));
+	}
+
+	return View::make('dajuhui.mdf_custom', ['data'=>$data]);
+}]);
+Route::post('mdf_custom', 'SpiderController@mdf_custom');
+
 /**
  * auth
  */
@@ -68,13 +75,9 @@ Route::get('foo',function(){
 });
 
 Route::get('bar',function(){
-
 	return view('aaa');
-
 });
 
-Route::get('sns_get_login', 'Home\HomeController@sns_get_login');
-Route::get('sns_login', 'Home\HomeController@sns_login');
 
 /**
  * home
@@ -96,15 +99,14 @@ Route::group(['namespace' => 'Home'], function()
 //	Route::get('{slug}', 'ArticlesController@show_bak');
 });
 
-
 /**
  * spider
  */
-//Route::get('spider/smzdm', 'SpiderController@smzdm');
-//Route::get('spider/huihui', 'SpiderController@huihui');
-//Route::get('spider/mgpyh', 'SpiderController@mgpyh');
+Route::get('spider/smzdm', 'SpiderController@smzdm');
+Route::get('spider/huihui', 'SpiderController@huihui');
+Route::get('spider/mgpyh', 'SpiderController@mgpyh');
+Route::get('spider/meidebi', 'SpiderController@meidebi');
 Route::get('spider/index', 'SpiderController@index');
-Route::get('coke/dajuhui', 'SpiderController@show');
 
 
 

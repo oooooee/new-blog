@@ -3,6 +3,12 @@
 use App\Http\Requests;
 use Curl;
 use App\Spider;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 
 class SpiderController extends Controller {
@@ -47,6 +53,7 @@ class SpiderController extends Controller {
      */
     private function send_mail($rows)
     {
+        return true;
         if (!empty($rows)) {
             \Mail::send('emails.goods', array('rows' => $rows), function($message)
             {
@@ -69,6 +76,8 @@ class SpiderController extends Controller {
     }
 
     public function index(){
+
+        set_time_limit(1000);
 
         // 总数据
         $mgpyh = [];
@@ -268,11 +277,44 @@ class SpiderController extends Controller {
 
     public function show(){
 
-        $pattern = '花王|贝亲|笔记本|卡西欧|纸巾|机械.*键盘|gxg|新百伦|施巴|妙思乐|维达|人字拖|化石';
 
-        $list = Spider::where('title', 'regexp', $pattern)->paginate(20);
+        $list = Spider::paginate(20);
 
         return View::make('dajuhui.goods', ['articles'=>$list]);
+    }
+
+    public function custom(){
+
+        $pattern = '花王|贝亲|笔记本|卡西欧|纸巾|机械.*键盘|gxg|新百伦|施巴|妙思乐|维达|人字拖|化石';
+        $data = DB::table('custom_show')->where('id', '=', Auth::user()->id)->first()->words;
+
+        if (!$data) {
+            $this->show();
+        }else{
+            $pattern = implode('|', json_decode($data, true));
+            $list = Spider::where('title', 'regexp', $pattern)->paginate(20);
+            return View::make('dajuhui.goods', ['articles'=>$list]);
+        }
+    }
+
+    public function mdf_custom(){
+
+        $data = DB::table('custom_show')->where('id', '=', Auth::user()->id)->first();
+
+        $custom_word = json_encode(explode('|', Input::get('custom_word')));
+
+        if (!$data) {
+            DB::table('custom_show')->insert([
+                'id' => Auth::user()->id,
+                'words'=>$custom_word
+            ]);
+        } else {
+            DB::table('custom_show')->where('id', '=', Auth::user()->id)->update([
+                'words'=>$custom_word
+            ]);
+        }
+
+        return redirect()->back();
     }
 
 
