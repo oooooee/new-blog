@@ -268,9 +268,9 @@ class SpiderController extends Controller {
 
     public function show(){
 
-        $pattern = '花王|贝亲|笔记本|卡西欧|纸巾|机械.*键盘|gxg|新百伦|施巴|妙思乐|维达|人字拖|化石';
+        $pattern = '花王|贝亲|笔记本|卡西欧|纸巾|机械.*键盘|gxg|新百伦|施巴|妙思乐|维达|人字拖|化石|苏菲';
 
-        $list = Spider::where('title', 'regexp', $pattern)->paginate(20);
+        $list = Spider::where('title', 'regexp', $pattern)->orderBy('created_at', 'DESC')->paginate(20);
 
         return View::make('dajuhui.goods', ['articles'=>$list]);
     }
