@@ -278,7 +278,7 @@ class SpiderController extends Controller {
     public function show(){
 
 
-        $list = Spider::paginate(20);
+        $list = Spider::orderBy('created_at', 'DESC')->paginate(20);
 
         return View::make('dajuhui.goods', ['articles'=>$list]);
     }
@@ -292,7 +292,7 @@ class SpiderController extends Controller {
             $this->show();
         }else{
             $pattern = implode('|', json_decode($data, true));
-            $list = Spider::where('title', 'regexp', $pattern)->paginate(20);
+            $list = Spider::where('title', 'regexp', $pattern)->orderBy('created_at', 'DESC')->paginate(20);
             return View::make('dajuhui.goods', ['articles'=>$list]);
         }
     }
