@@ -53,6 +53,11 @@ class SettingsController extends Controller {
 		return redirect('admin/settings/index');
 	}
 
+    public function flush()
+    {
+        \Cache::flush();
+        return 'cache flush ok';
+    }
 
 	/**
 	 * Display the specified resource.

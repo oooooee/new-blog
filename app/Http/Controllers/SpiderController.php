@@ -317,6 +317,20 @@ class SpiderController extends Controller {
         return redirect()->back();
     }
 
+    public function get_mdf_custom()
+    {
+
+        $data = DB::table('custom_show')->where('id', '=', Auth::user()->id)->first();
+
+        if (!$data) {
+            $data = '';
+        }else{
+            $data = implode('|', json_decode($data->words, true));
+        }
+
+        return View::make('dajuhui.mdf_custom', ['data'=>$data]);
+    }
+
 
 }
 

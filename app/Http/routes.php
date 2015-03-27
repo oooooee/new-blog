@@ -34,25 +34,12 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth
 
 	Route::post('uploadImage', 'ArticlesController@uploadImage');
 
-	Route::get('setting/flush',function(){
-		\Cache::flush();
-		return 'cache flush ok';
-	});
+	Route::get('setting/flush','SettingsController@flush');
 });
 
 Route::get('dajuhui', 'SpiderController@show');
 Route::get('custom', 'SpiderController@custom');
-Route::get('mdf_custom', ['middleware' => 'auth', function(){
-	$data = DB::table('custom_show')->where('id', '=', Auth::user()->id)->first();
-
-	if (!$data) {
-		$data = '';
-	}else{
-		$data = implode('|', json_decode($data->words, true));
-	}
-
-	return View::make('dajuhui.mdf_custom', ['data'=>$data]);
-}]);
+Route::get('mdf_custom', ['middleware' => 'auth', 'uses'=>'SpiderController@get_mdf_custom']);
 Route::post('mdf_custom', 'SpiderController@mdf_custom');
 
 /**
@@ -68,15 +55,6 @@ Route::get('logout','Admin\AuthController@logout');
 	'password' => 'Auth\PasswordController',
 ]);
 */
-
-Route::get('foo',function(){
-	\Cache::flush();
-	return 'ok';
-});
-
-Route::get('bar',function(){
-	return view('aaa');
-});
 
 
 /**
