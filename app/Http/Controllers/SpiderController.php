@@ -77,7 +77,7 @@ class SpiderController extends Controller {
 
     public function index(){
 
-        set_time_limit(1000);
+        set_time_limit(500);
 
         // 总数据
         $mgpyh = [];
